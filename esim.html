@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>eSIM 開啟模擬器 (高擬真長輩練習版)</title>
+<style>
+    /* 基礎手機框架設定 */
+    body {
+        display: flex; justify-content: center; align-items: center;
+        min-height: 100vh; background-color: #333; margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    .iphone-frame {
+        width: 375px; height: 812px;
+        background-color: #f2f2f7;
+        border: 14px solid #000; border-radius: 40px;
+        position: relative; overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    .notch {
+        width: 150px; height: 30px; background-color: #000;
+        position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+        border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; z-index: 10;
+    }
+    .status-bar {
+        display: flex; justify-content: space-between;
+        padding: 12px 25px 0 25px; font-size: 14px; font-weight: 600;
+        color: #000; position: relative; z-index: 9;
+    }
+
+    /* 各個頁面容器 */
+    .screen {
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        background-color: #f2f2f7; display: none;
+        padding-top: 44px; box-sizing: border-box;
+        overflow-y: auto; overflow-x: hidden;
+        animation: slideIn 0.3s ease forwards;
+        padding-bottom: 30px;
+    }
+    .screen.active { display: block; }
+    
+    @keyframes slideIn {
+        from { transform: translateX(20px); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+
+    /* 導覽列 */
+    .navbar {
+        display: flex; align-items: center; padding: 0 15px; 
+        height: 44px; background-color: #f2f2f7; box-sizing: border-box;
+        position: sticky; top: 0; z-index: 5;
+    }
+    .back-btn {
+        color: #007aff; font-size: 17px; cursor: pointer;
+        display: flex; align-items: center; 
+        width: 100px; height: 100%; 
+        padding-left: 15px; margin-left: -15px; 
+        background-color: transparent;
+        -webkit-tap-highlight-color: transparent;
+    }
+    .back-btn::before { content: '‹'; font-size: 32px; margin-right: 4px; margin-top: -4px; }
+    .nav-title {
+        flex-grow: 1; text-align: center; font-size: 17px; font-weight: 600;
+        margin-left: -100px; 
+    }
+
+    /* 列表群組 (iOS 設定風格) */
+    .list-group {
+        background-color: #fff; border-radius: 10px;
+        margin: 20px 15px 10px 15px; overflow: hidden;
+    }
+    .list-group-title {
+        font-size: 13px; color: #8e8e93; margin: 5px 15px 5px 30px;
+        text-transform: uppercase;
+    }
+    .list-group-footer {
+        font-size: 13px; color: #8e8e93; margin: 0 25px 15px 25px;
+        line-height: 1.4;
+    }
+    .list-item {
+        display: flex; justify-content: space-between; align-items: center;
+        padding: 12px 15px; border-bottom: 1px solid #e5e5ea;
+        font-size: 17px; cursor: pointer; background: #fff;
+    }
+    .list-item:last-child { border-bottom: none; }
+    .list-item:active { background-color: #e5e5ea; }
+    .list-item.disabled { opacity: 0.5; pointer-events: none; }
+    
+    .item-left { display: flex; align-items: center; }
+    .icon {
+        width: 28px; height: 28px; border-radius: 6px; margin-right: 15px;
+        display: flex; justify-content: center; align-items: center;
+        color: white; font-size: 18px;
+    }
+    .bg-green { background-color: #34c759; }
+    .bg-blue { background-color: #007aff; }
+
+    .item-right { color: #8e8e93; display: flex; align-items: center; font-size: 16px; }
+    .arrow::after {
+        content: '›'; font-size: 24px; color: #c6c6c8; margin-left: 10px; margin-top: -2px;
+    }
+
+    /* 開關 (Toggle) */
+    .toggle {
+        width: 50px; height: 30px; background-color: #e9e9ea;
+        border-radius: 15px; position: relative; transition: 0.3s; cursor: pointer;
+    }
+    .toggle.on { background-color: #34c759; }
+    .toggle-knob {
+        width: 26px; height: 26px; background-color: #fff; border-radius: 50%;
+        position: absolute; top: 2px; left: 2px; transition: 0.3s;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    .toggle.on .toggle-knob { left: 22px; }
+
+    /* 打勾圖示 */
+    .checkmark { color: #007aff; font-weight: bold; font-size: 20px; display: none; }
+    .show-check { display: block; }
+
+    /* 訊號抓取動畫 */
+    @keyframes signalSearch {
+        0% { opacity: 1; }
+        50% { opacity: 0.3; }
+        100% { opacity: 1; }
+    }
+    .searching { animation: signalSearch 0.5s infinite; color: #34c759; }
+
+    /* 成功通關畫面 */
+    .success-overlay {
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        background-color: rgba(0, 0, 0, 0.85); color: white;
+        display: none; flex-direction: column; justify-content: center; align-items: center;
+        z-index: 100; text-align: center; padding: 20px; box-sizing: border-box;
+    }
+    .success-icon {
+        font-size: 80px; color: #34c759; margin-bottom: 20px;
+        animation: pop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+    .success-text { font-size: 24px; font-weight: bold; margin-bottom: 15px; line-height: 1.4; }
+    .success-desc { font-size: 16px; color: #ccc; margin-bottom: 30px; text-align: left;}
+    .restart-btn {
+        background-color: #007aff; color: white; border: none;
+        padding: 12px 30px; font-size: 18px; border-radius: 20px; cursor: pointer;
+    }
+    @keyframes pop { 0% { transform: scale(0); } 100% { transform: scale(1); } }
+</style>
+</head>
+<body>
+
+<div class="iphone-frame">
+    <div class="notch"></div>
+    <div class="status-bar">
+        <span>17:42</span>
+        <span id="top-status-icons">4G 🔋</span>
+    </div>
+
+    <div id="screen-settings" class="screen active">
+        <h2 style="margin: 10px 20px; font-size: 32px;">設定</h2>
+        
+        <div class="list-group">
+            <div class="list-item">
+                <div class="item-left"><div class="icon" style="background:#ff9500">✈️</div>飛航模式</div>
+                <div class="toggle"><div class="toggle-knob"></div></div>
+            </div>
+            <div class="list-item">
+                <div class="item-left"><div class="icon bg-blue">📶</div>Wi-Fi</div>
+                <div class="item-right arrow">未連接</div>
+            </div>
+            <div class="list-item">
+                <div class="item-left">
+                    <div class="icon bg-blue">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6.5 6.5 17.5 17.5 12 23 12 1 17.5 6.5 6.5 17.5"></polyline></svg>
+                    </div>藍牙
+                </div>
+                <div class="item-right arrow">開啟</div>
+            </div>
+            <div class="list-item" onclick="navTo('screen-cellular')">
+                <div class="item-left"><div class="icon bg-green">📡</div>行動服務</div>
+                <div class="item-right arrow"></div>
+            </div>
+            <div class="list-item">
+                <div class="item-left"><div class="icon bg-green">🔗</div>個人熱點</div>
+                <div class="item-right arrow"></div>
+            </div>
+        </div>
+
+        <div class="list-group">
+            <div class="list-item">
+                <div class="item-left"><div class="icon" style="background:#ff3b30">🔔</div>通知</div>
+                <div class="item-right arrow"></div>
+            </div>
+            <div class="list-item">
+                <div class="item-left"><div class="icon" style="background:#ff2d55">🔊</div>聲音與觸覺回饋</div>
+                <div class="item-right arrow"></div>
+            </div>
+            <div class="list-item">
+                <div class="item-left"><div class="icon" style="background:#5856d6">🌙</div>專注模式</div>
+                <div class="item-right arrow"></div>
+            </div>
+            <div class="list-item">
+                <div class="item-left"><div class="icon" style="background:#5856d6">⏳</div>螢幕使用時間</div>
+                <div class="item-right arrow"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="screen-cellular" class="screen">
+        <div class="navbar">
+            <div class="back-btn" onclick="navTo('screen-settings')">設定</div>
+            <div class="nav-title">行動服務</div>
+        </div>
+        
+        <div class="list-group">
+            <div class="list-item" onclick="navTo('screen-cellular-data')">
+                <div class="item-left">行動數據</div>
+                <div class="item-right arrow" id="ui-main-data-line">主要</div>
+            </div>
+            <div class="list-item">
+                <div class="item-left">預設語音號碼</div>
+                <div class="item-right arrow">主要</div>
+            </div>
+        </div>
+
+        <div class="list-group-title">SIM</div>
+        <div class="list-group">
+            <div class="list-item" onclick="navTo('screen-primary-sim')">
+                <div class="item-left" style="flex-direction: column; align-items: flex-start;">
+                    <span>主要</span>
+                    <span style="font-size: 13px; color: #8e8e93;">+886 912 345 678</span>
+                </div>
+                <div class="item-right arrow" id="ui-main-primary-status">開啟</div>
+            </div>
+            <div class="list-item" onclick="navTo('screen-travel-sim')">
+                <div class="item-left" style="flex-direction: column; align-items: flex-start;">
+                    <span>旅遊</span>
+                    <span style="font-size: 13px; color: #8e8e93;" id="ui-main-travel-number">無號碼</span>
+                </div>
+                <div class="item-right arrow" id="ui-main-travel-status">關閉</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="screen-cellular-data" class="screen">
+        <div class="navbar">
+            <div class="back-btn" onclick="navTo('screen-cellular')">行動服務</div>
+            <div class="nav-title">行動數據</div>
+        </div>
+        <div class="list-group">
+            <div class="list-item" onclick="setDataLine('off')">
+                <div class="item-left">關閉</div>
+                <div class="checkmark" id="check-data-off">✓</div>
+            </div>
+            <div class="list-item" id="opt-data-primary" onclick="setDataLine('primary')">
+                <div class="item-left">主要</div>
+                <div class="checkmark" id="check-data-primary">✓</div>
+            </div>
+            <div class="list-item" id="opt-data-travel" onclick="setDataLine('travel')">
+                <div class="item-left">旅遊</div>
+                <div class="checkmark" id="check-data-travel">✓</div>
+            </div>
+        </div>
+        
+        <div class="list-group" id="grp-data-switching">
+            <div class="list-item" onclick="toggleState('allowDataSwitching')">
+                <div class="item-left">允許行動數據切換</div>
+                <div class="toggle" id="ui-toggle-switching"><div class="toggle-knob"></div></div>
+            </div>
+        </div>
+        <div class="list-group-footer" id="txt-data-switching">
+            開啟此設定將允許你的電話根據涵蓋率和可用性，使用兩個號碼的行動方案。
+        </div>
+        
+        <div class="list-group-footer">
+            關閉行動數據來限制所有數據服務只能透過 Wi-Fi 取用，包含電子郵件、瀏覽網頁和推播通知等。
+        </div>
+    </div>
+
+    <div id="screen-primary-sim" class="screen">
+        <div class="navbar">
+            <div class="back-btn" onclick="navTo('screen-cellular')">行動服務</div>
+            <div class="nav-title">主要</div>
+        </div>
+        <div class="list-group">
+            <div class="list-item" onclick="toggleState('primaryOn')">
+                <div class="item-left">開啟此號碼</div>
+                <div class="toggle" id="ui-toggle-primary"><div class="toggle-knob"></div></div>
+            </div>
+        </div>
+        <div id="primary-details">
+            <div class="list-group">
+                <div class="list-item"><div class="item-left">網路選擇</div><div class="item-right arrow">中華電信</div></div>
+                <div class="list-item"><div class="item-left">Wi-Fi通話</div><div class="item-right arrow">關閉</div></div>
+            </div>
+            <div class="list-group">
+                <div class="list-item"><div class="item-left">語音與數據</div><div class="item-right arrow">5G自動模式</div></div>
+                <div class="list-item"><div class="item-left">數據模式</div><div class="item-right arrow">標準</div></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="screen-travel-sim" class="screen">
+        <div class="navbar">
+            <div class="back-btn" onclick="navTo('screen-cellular')">行動服務</div>
+            <div class="nav-title">旅遊</div>
+        </div>
+        
+        <div class="list-group">
+            <div class="list-item" onclick="toggleState('travelOn')">
+                <div class="item-left">開啟此號碼</div>
+                <div class="toggle" id="ui-toggle-travel"><div class="toggle-knob"></div></div>
+            </div>
+        </div>
+
+        <div id="travel-details">
+            <div class="list-group">
+                <div class="list-item"><div class="item-left">行動方案標籤</div><div class="item-right arrow">旅遊</div></div>
+                <div class="list-item"><div class="item-left">網路選擇</div><div class="item-right arrow">台灣大哥大</div></div>
+                <div class="list-item"><div class="item-left">Wi-Fi通話</div><div class="item-right arrow">關閉</div></div>
+                <div class="list-item"><div class="item-left">在其他裝置上通話</div><div class="item-right arrow">位於附近時</div></div>
+            </div>
+            
+            <div class="list-group">
+                <div class="list-item"><div class="item-left">語音與數據</div><div class="item-right arrow">4G</div></div>
+                <div class="list-item"><div class="item-left">數據模式</div><div class="item-right arrow">標準</div></div>
+                <div class="list-item">
+                    <div class="item-left">限制IP位址追蹤</div>
+                    <div class="toggle on"><div class="toggle-knob"></div></div>
+                </div>
+                <div class="list-item" onclick="toggleState('travelRoaming')">
+                    <div class="item-left">數據漫遊</div>
+                    <div class="toggle" id="ui-toggle-roaming"><div class="toggle-knob"></div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="success-overlay" class="success-overlay">
+        <div class="success-icon">✅</div>
+        <div class="success-text">太棒了！<br>準備好去日本上網囉！</div>
+        <div class="success-desc">
+            您已經完美完成去日本上網的步驟：<br><br>
+            ✔️ 將原先的「主要」號碼關閉<br>
+            ✔️ 開啟「旅遊」號碼，並重進頁面開啟「數據漫遊」<br>
+            ✔️ 進入「行動數據」，手動切換為「旅遊」
+        </div>
+        <button class="restart-btn" onclick="resetSimulator()">再練習一次</button>
+    </div>
+</div>
+
+<script>
+    let state = {
+        primaryOn: true,
+        travelOn: false,
+        dataLine: 'primary', 
+        allowDataSwitching: false,
+        travelRoaming: false,
+        manualDataSwitchToTravel: false,
+        travelDetailsUnlocked: false,
+        isSuccessTriggered: false 
+    };
+
+    function navTo(screenId) {
+        if (screenId === 'screen-travel-sim' && state.travelOn) {
+            state.travelDetailsUnlocked = true;
+        }
+
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(screenId).classList.add('active');
+        renderUI();
+    }
+
+    function toggleState(key) {
+        state[key] = !state[key];
+        
+        if(key === 'primaryOn' && !state.primaryOn && state.dataLine === 'primary') {
+            state.dataLine = 'off'; 
+        }
+        if(key === 'travelOn') {
+            if (!state.travelOn) {
+                if (state.dataLine === 'travel') {
+                    state.dataLine = state.primaryOn ? 'primary' : 'off';
+                    state.manualDataSwitchToTravel = false; 
+                }
+                state.travelRoaming = false; 
+                state.travelDetailsUnlocked = false; 
+            }
+        }
+        
+        renderUI();
+        checkCompletion();
+    }
+
+    function setDataLine(line) {
+        if(line === 'primary' && !state.primaryOn) {
+            alert('提示：主要 SIM 卡目前已關閉，無法使用。');
+            return;
+        }
+        if(line === 'travel' && !state.travelOn) {
+            alert('提示：請先到「旅遊」裡面「開啟此號碼」，才能將網路切換過來喔！');
+            return;
+        }
+        
+        state.dataLine = line;
+        
+        if (line === 'travel') {
+            state.manualDataSwitchToTravel = true;
+        } else {
+            state.manualDataSwitchToTravel = false;
+        }
+
+        renderUI();
+        
+        setTimeout(() => {
+            checkCompletion();
+        }, 500);
+    }
+
+    function renderUI() {
+        document.getElementById('ui-toggle-primary').className = state.primaryOn ? 'toggle on' : 'toggle';
+        document.getElementById('ui-main-primary-status').innerText = state.primaryOn ? '開啟' : '關閉';
+        document.getElementById('primary-details').style.display = state.primaryOn ? 'block' : 'none';
+
+        document.getElementById('ui-toggle-travel').className = state.travelOn ? 'toggle on' : 'toggle';
+        document.getElementById('ui-main-travel-status').innerText = state.travelOn ? '開啟' : '關閉';
+        
+        document.getElementById('travel-details').style.display = (state.travelOn && state.travelDetailsUnlocked) ? 'block' : 'none';
+        
+        document.getElementById('ui-toggle-roaming').className = state.travelRoaming ? 'toggle on' : 'toggle';
+
+        const optPrimary = document.getElementById('opt-data-primary');
+        const optTravel = document.getElementById('opt-data-travel');
+        
+        // 修改為即使關閉也不禁用點擊，讓長輩點擊時可以跳出 alert 提示
+        // 移除了 .disabled 樣式判斷，確保體驗一致
+
+        document.getElementById('check-data-off').className = state.dataLine === 'off' ? 'checkmark show-check' : 'checkmark';
+        document.getElementById('check-data-primary').className = state.dataLine === 'primary' ? 'checkmark show-check' : 'checkmark';
+        document.getElementById('check-data-travel').className = state.dataLine === 'travel' ? 'checkmark show-check' : 'checkmark';
+
+        // 移除隱藏邏輯，讓切換選項固定顯示
+        document.getElementById('ui-toggle-switching').className = state.allowDataSwitching ? 'toggle on' : 'toggle';
+
+        let dataText = '關閉';
+        if (state.dataLine === 'primary') dataText = '主要';
+        if (state.dataLine === 'travel') dataText = '旅遊';
+        document.getElementById('ui-main-data-line').innerText = dataText;
+    }
+
+    function checkCompletion() {
+        if(state.travelOn && state.dataLine === 'travel' && state.travelRoaming && state.manualDataSwitchToTravel && !state.primaryOn) {
+            if (state.isSuccessTriggered) return;
+            state.isSuccessTriggered = true;
+
+            const statusIcons = document.getElementById('top-status-icons');
+            statusIcons.innerText = "搜尋中...";
+            statusIcons.classList.add('searching');
+
+            setTimeout(() => {
+                statusIcons.classList.remove('searching');
+                statusIcons.innerText = "SoftBank 5G 🔋";
+                statusIcons.style.color = "#34c759"; 
+
+                setTimeout(() => {
+                    document.getElementById('success-overlay').style.display = 'flex';
+                }, 1000);
+            }, 1500);
+        }
+    }
+
+    function resetSimulator() {
+        state = { 
+            primaryOn: true, travelOn: false, dataLine: 'primary', 
+            allowDataSwitching: false, travelRoaming: false, manualDataSwitchToTravel: false,
+            travelDetailsUnlocked: false, isSuccessTriggered: false
+        };
+        document.getElementById('success-overlay').style.display = 'none';
+        
+        const statusIcons = document.getElementById('top-status-icons');
+        statusIcons.innerText = "4G 🔋";
+        statusIcons.style.color = "#000";
+        statusIcons.classList.remove('searching');
+
+        renderUI();
+        navTo('screen-settings');
+    }
+
+    window.onload = renderUI;
+</script>
+
+</body>
+</html>
