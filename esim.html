@@ -21,12 +21,12 @@
     .notch {
         width: 150px; height: 30px; background-color: #000;
         position: absolute; top: 0; left: 50%; transform: translateX(-50%);
-        border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; z-index: 10;
+        border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; z-index: 20;
     }
     .status-bar {
         display: flex; justify-content: space-between;
         padding: 12px 25px 0 25px; font-size: 14px; font-weight: 600;
-        color: #000; position: relative; z-index: 9;
+        color: #000; position: relative; z-index: 15;
     }
 
     /* 各個頁面容器 */
@@ -39,6 +39,48 @@
         padding-bottom: 30px;
     }
     .screen.active { display: block; }
+
+    /* 主畫面特定樣式 */
+    #screen-home {
+        background: linear-gradient(180deg, #64b5f6 0%, #1a237e 100%);
+        padding-top: 60px;
+        overflow: hidden;
+    }
+    #screen-home .status-bar { color: white; }
+    .app-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 25px;
+        padding: 20px;
+    }
+    .app-icon-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        cursor: pointer;
+    }
+    .app-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 14px;
+        background: linear-gradient(180deg, #bdbdbd 0%, #757575 100%);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        margin-bottom: 8px;
+    }
+    .app-icon svg {
+        width: 40px;
+        height: 40px;
+        fill: #333;
+    }
+    .app-label {
+        color: white;
+        font-size: 12px;
+        font-weight: 500;
+        text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+    }
     
     @keyframes slideIn {
         from { transform: translateX(20px); opacity: 0; }
@@ -85,7 +127,6 @@
     }
     .list-item:last-child { border-bottom: none; }
     .list-item:active { background-color: #e5e5ea; }
-    .list-item.disabled { opacity: 0.5; pointer-events: none; }
     
     .item-left { display: flex; align-items: center; }
     .icon {
@@ -150,12 +191,29 @@
 
 <div class="iphone-frame">
     <div class="notch"></div>
-    <div class="status-bar">
+    <div class="status-bar" id="global-status-bar">
         <span>17:42</span>
         <span id="top-status-icons">4G 🔋</span>
     </div>
 
-    <div id="screen-settings" class="screen active">
+    <div id="screen-home" class="screen active" style="padding-top:0">
+        <div class="status-bar" style="color:white; padding-top:12px">
+            <span>17:42</span>
+            <span>4G 🔋</span>
+        </div>
+        <div class="app-grid">
+            <div class="app-icon-wrapper" onclick="navTo('screen-settings')">
+                <div class="app-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+                    </svg>
+                </div>
+                <div class="app-label">設定</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="screen-settings" class="screen">
         <h2 style="margin: 10px 20px; font-size: 32px;">設定</h2>
         
         <div class="list-group">
@@ -361,6 +419,14 @@
     };
 
     function navTo(screenId) {
+        // 進入設定 App 內部後顯示狀態列
+        const globalStatus = document.getElementById('global-status-bar');
+        if (screenId === 'screen-home') {
+            globalStatus.style.display = 'none';
+        } else {
+            globalStatus.style.display = 'flex';
+        }
+
         if (screenId === 'screen-travel-sim' && state.travelOn) {
             state.travelDetailsUnlocked = true;
         }
@@ -428,17 +494,10 @@
         
         document.getElementById('ui-toggle-roaming').className = state.travelRoaming ? 'toggle on' : 'toggle';
 
-        const optPrimary = document.getElementById('opt-data-primary');
-        const optTravel = document.getElementById('opt-data-travel');
-        
-        // 修改為即使關閉也不禁用點擊，讓長輩點擊時可以跳出 alert 提示
-        // 移除了 .disabled 樣式判斷，確保體驗一致
-
         document.getElementById('check-data-off').className = state.dataLine === 'off' ? 'checkmark show-check' : 'checkmark';
         document.getElementById('check-data-primary').className = state.dataLine === 'primary' ? 'checkmark show-check' : 'checkmark';
         document.getElementById('check-data-travel').className = state.dataLine === 'travel' ? 'checkmark show-check' : 'checkmark';
 
-        // 移除隱藏邏輯，讓切換選項固定顯示
         document.getElementById('ui-toggle-switching').className = state.allowDataSwitching ? 'toggle on' : 'toggle';
 
         let dataText = '關閉';
@@ -482,10 +541,12 @@
         statusIcons.classList.remove('searching');
 
         renderUI();
-        navTo('screen-settings');
+        navTo('screen-home'); // 【修正】重置後回到主畫面
     }
 
-    window.onload = renderUI;
+    window.onload = () => {
+        navTo('screen-home'); // 【修正】初始化預設為主畫面
+    };
 </script>
 
 </body>
