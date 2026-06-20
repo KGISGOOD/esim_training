@@ -75,6 +75,14 @@
         height: 40px;
         fill: #333;
     }
+    .app-icon.phone {
+        background: linear-gradient(180deg, #34c759 0%, #1f8f47 100%);
+    }
+    .app-icon.phone span {
+        font-size: 28px;
+        color: white;
+        line-height: 1;
+    }
     .app-label {
         color: white;
         font-size: 12px;
@@ -184,6 +192,201 @@
         background-color: #007aff; color: white; border: none;
         padding: 12px 30px; font-size: 18px; border-radius: 20px; cursor: pointer;
     }
+    .phone-panel {
+        margin: 20px 15px;
+        background: #fff;
+        border-radius: 14px;
+        padding: 20px;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+    }
+    .phone-input {
+        width: 100%;
+        font-size: 20px;
+        padding: 14px 16px;
+        border: 1px solid #d1d1d6;
+        border-radius: 12px;
+        box-sizing: border-box;
+        outline: none;
+        margin-bottom: 12px;
+    }
+    .phone-input:focus {
+        border-color: #007aff;
+    }
+    .phone-button {
+        width: 100%;
+        font-size: 18px;
+        padding: 13px 16px;
+        border: none;
+        border-radius: 12px;
+        background: #007aff;
+        color: #fff;
+        cursor: pointer;
+    }
+    .phone-hint {
+        margin-top: 10px;
+        font-size: 13px;
+        color: #8e8e93;
+        line-height: 1.5;
+    }
+    .phone-result {
+        margin-top: 12px;
+        font-size: 14px;
+        color: #34c759;
+        min-height: 20px;
+    }
+    .dialer-panel {
+        margin: 18px 10px 0 10px;
+        padding: 10px 0 0 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .dialer-number {
+        width: calc(100% - 20px);
+        min-height: 54px;
+        font-size: 34px;
+        font-weight: 300;
+        letter-spacing: 1px;
+        text-align: center;
+        border: none;
+        outline: none;
+        background: transparent;
+        color: #1c1c1e;
+        margin: 8px 0 18px 0;
+        caret-color: transparent;
+    }
+    .dialer-subtext {
+        font-size: 13px;
+        color: #8e8e93;
+        margin-top: -8px;
+        margin-bottom: 18px;
+    }
+    .dialer-grid {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 14px 18px;
+        padding: 0 18px;
+        box-sizing: border-box;
+    }
+    .dialer-key {
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        border: none;
+        border-radius: 999px;
+        background: #f2f2f7;
+        color: #1c1c1e;
+        font-size: 28px;
+        font-weight: 400;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+        touch-action: manipulation;
+    }
+    .dialer-key:active {
+        background: #d1d1d6;
+    }
+    .dialer-key .letters {
+        font-size: 10px;
+        letter-spacing: 1px;
+        margin-top: 1px;
+        color: #8e8e93;
+    }
+    .dialer-actions {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 22px 36px 6px 36px;
+        box-sizing: border-box;
+    }
+    .dialer-action-btn {
+        width: 62px;
+        height: 62px;
+        border: none;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+        user-select: none;
+    }
+    .dialer-action-btn.delete {
+        background: transparent;
+        color: #8e8e93;
+        font-size: 30px;
+    }
+    .dialer-action-btn.call {
+        background: #34c759;
+        color: #fff;
+        font-size: 26px;
+        box-shadow: 0 8px 18px rgba(52, 199, 89, 0.35);
+    }
+    .dialer-action-btn.call:active {
+        background: #28a745;
+    }
+    .dialer-call-note {
+        width: calc(100% - 40px);
+        margin: 0 20px 12px 20px;
+        font-size: 13px;
+        color: #8e8e93;
+        text-align: center;
+        line-height: 1.5;
+    }
+    .modal-overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.45);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 120;
+        padding: 20px;
+        box-sizing: border-box;
+    }
+    .modal-card {
+        width: 100%;
+        max-width: 300px;
+        background: #fff;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+    }
+    .modal-title {
+        padding: 16px 18px 8px 18px;
+        font-size: 18px;
+        font-weight: 600;
+        color: #1c1c1e;
+        text-align: center;
+    }
+    .modal-body {
+        padding: 0 18px 18px 18px;
+        font-size: 15px;
+        color: #3a3a3c;
+        line-height: 1.55;
+        white-space: pre-line;
+    }
+    .modal-actions {
+        border-top: 1px solid #e5e5ea;
+        display: flex;
+    }
+    .modal-button {
+        flex: 1;
+        border: none;
+        background: #fff;
+        color: #007aff;
+        font-size: 17px;
+        padding: 14px 16px;
+        cursor: pointer;
+    }
+    .modal-button:active {
+        background: #f2f2f7;
+    }
     @keyframes pop { 0% { transform: scale(0); } 100% { transform: scale(1); } }
 </style>
 </head>
@@ -210,11 +413,18 @@
                 </div>
                 <div class="app-label">設定</div>
             </div>
+            <div class="app-icon-wrapper" onclick="navTo('screen-phone')">
+                <div class="app-icon phone"><span>📞</span></div>
+                <div class="app-label">電話</div>
+            </div>
         </div>
     </div>
 
     <div id="screen-settings" class="screen">
-        <h2 style="margin: 10px 20px; font-size: 32px;">設定</h2>
+        <div class="navbar">
+            <div class="back-btn" onclick="navTo('screen-home')">主畫面</div>
+            <div class="nav-title">設定</div>
+        </div>
         
         <div class="list-group">
             <div class="list-item">
@@ -284,15 +494,15 @@
         <div class="list-group">
             <div class="list-item" onclick="navTo('screen-primary-sim')">
                 <div class="item-left" style="flex-direction: column; align-items: flex-start;">
-                    <span>主要</span>
+                    <span>個人</span>
                     <span style="font-size: 13px; color: #8e8e93;">+886 912 345 678</span>
                 </div>
                 <div class="item-right arrow" id="ui-main-primary-status">開啟</div>
             </div>
             <div class="list-item" onclick="navTo('screen-travel-sim')">
                 <div class="item-left" style="flex-direction: column; align-items: flex-start;">
-                    <span>旅遊</span>
-                    <span style="font-size: 13px; color: #8e8e93;" id="ui-main-travel-number">無號碼</span>
+                    <span>日本</span>
+                    <span style="font-size: 13px; color: #8e8e93;" id="ui-main-travel-number">日本 eSIM</span>
                 </div>
                 <div class="item-right arrow" id="ui-main-travel-status">關閉</div>
             </div>
@@ -314,7 +524,7 @@
                 <div class="checkmark" id="check-data-primary">✓</div>
             </div>
             <div class="list-item" id="opt-data-travel" onclick="setDataLine('travel')">
-                <div class="item-left">旅遊</div>
+                <div class="item-left">日本</div>
                 <div class="checkmark" id="check-data-travel">✓</div>
             </div>
         </div>
@@ -337,7 +547,7 @@
     <div id="screen-primary-sim" class="screen">
         <div class="navbar">
             <div class="back-btn" onclick="navTo('screen-cellular')">行動服務</div>
-            <div class="nav-title">主要</div>
+            <div class="nav-title">個人</div>
         </div>
         <div class="list-group">
             <div class="list-item" onclick="toggleState('primaryOn')">
@@ -347,7 +557,7 @@
         </div>
         <div id="primary-details">
             <div class="list-group">
-                <div class="list-item"><div class="item-left">網路選擇</div><div class="item-right arrow">中華電信</div></div>
+                <div class="list-item"><div class="item-left">網路選擇</div><div class="item-right arrow">台灣大哥大</div></div>
                 <div class="list-item"><div class="item-left">Wi-Fi通話</div><div class="item-right arrow">關閉</div></div>
             </div>
             <div class="list-group">
@@ -360,7 +570,7 @@
     <div id="screen-travel-sim" class="screen">
         <div class="navbar">
             <div class="back-btn" onclick="navTo('screen-cellular')">行動服務</div>
-            <div class="nav-title">旅遊</div>
+            <div class="nav-title">日本</div>
         </div>
         
         <div class="list-group">
@@ -372,8 +582,8 @@
 
         <div id="travel-details">
             <div class="list-group">
-                <div class="list-item"><div class="item-left">行動方案標籤</div><div class="item-right arrow">旅遊</div></div>
-                <div class="list-item"><div class="item-left">網路選擇</div><div class="item-right arrow">台灣大哥大</div></div>
+                <div class="list-item"><div class="item-left">行動方案標籤</div><div class="item-right arrow">日本</div></div>
+                <div class="list-item"><div class="item-left">網路選擇</div><div class="item-right arrow">日本 eSIM</div></div>
                 <div class="list-item"><div class="item-left">Wi-Fi通話</div><div class="item-right arrow">關閉</div></div>
                 <div class="list-item"><div class="item-left">在其他裝置上通話</div><div class="item-right arrow">位於附近時</div></div>
             </div>
@@ -393,28 +603,73 @@
         </div>
     </div>
 
+    <div id="screen-phone" class="screen">
+        <div class="navbar">
+            <div class="back-btn" onclick="navTo('screen-home')">主畫面</div>
+            <div class="nav-title">電話</div>
+        </div>
+        <div class="dialer-panel">
+            <div id="phone-number-display" class="dialer-number" aria-label="電話號碼"></div>
+            <div class="dialer-subtext">長按 0 可輸入 +</div>
+            <div class="dialer-grid">
+                <button class="dialer-key" data-digit="1">1</button>
+                <button class="dialer-key" data-digit="2">2<div class="letters">ABC</div></button>
+                <button class="dialer-key" data-digit="3">3<div class="letters">DEF</div></button>
+                <button class="dialer-key" data-digit="4">4<div class="letters">GHI</div></button>
+                <button class="dialer-key" data-digit="5">5<div class="letters">JKL</div></button>
+                <button class="dialer-key" data-digit="6">6<div class="letters">MNO</div></button>
+                <button class="dialer-key" data-digit="7">7<div class="letters">PQRS</div></button>
+                <button class="dialer-key" data-digit="8">8<div class="letters">TUV</div></button>
+                <button class="dialer-key" data-digit="9">9<div class="letters">WXYZ</div></button>
+                <button class="dialer-key" data-digit="*">*</button>
+                <button class="dialer-key" data-digit="0">0<div class="letters">+</div></button>
+                <button class="dialer-key" data-digit="#">#</button>
+            </div>
+            <div class="dialer-actions">
+                <button class="dialer-action-btn delete" id="dialer-delete-btn" type="button">⌫</button>
+                <button class="dialer-action-btn call" id="dialer-call-btn" type="button">📞</button>
+            </div>
+            <div class="dialer-call-note">輸入 <strong>+886935120437</strong> 後按撥打，才會完成成功條件。</div>
+            <div id="phone-result" class="phone-result"></div>
+        </div>
+    </div>
+
     <div id="success-overlay" class="success-overlay">
         <div class="success-icon">✅</div>
-        <div class="success-text">太棒了！<br>準備好去日本上網囉！</div>
+        <div class="success-text">太棒了！<br>日本 eSIM 設定完成</div>
         <div class="success-desc">
             您已經完美完成去日本上網的步驟：<br><br>
-            ✔️ 將原先的「主要」號碼關閉<br>
-            ✔️ 開啟「旅遊」號碼，並重進頁面開啟「數據漫遊」<br>
-            ✔️ 進入「行動數據」，手動切換為「旅遊」
+            ✔️ 日本 eSIM 預設保持開啟，並打開「數據漫遊」<br>
+            ✔️ 關閉「個人」號碼的「開啟此號碼」<br>
+            ✔️ 回到主畫面的「電話」輸入 +886935120437<br>
+            ✔️ 「行動數據」無需更動
         </div>
         <button class="restart-btn" onclick="resetSimulator()">再練習一次</button>
+    </div>
+
+    <div id="failure-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="failure-modal-title">
+        <div class="modal-card">
+            <div id="failure-modal-title" class="modal-title">撥號失敗</div>
+            <div id="failure-modal-body" class="modal-body"></div>
+            <div class="modal-actions">
+                <button class="modal-button" onclick="confirmFailureModal()">確定</button>
+            </div>
+        </div>
     </div>
 </div>
 
 <script>
     let state = {
         primaryOn: true,
-        travelOn: false,
+        travelOn: true,
         dataLine: 'primary', 
         allowDataSwitching: false,
         travelRoaming: false,
         manualDataSwitchToTravel: false,
         travelDetailsUnlocked: false,
+        phoneNumber: '',
+        phoneDialed: false,
+        pendingClearPhone: false,
         isSuccessTriggered: false 
     };
 
@@ -459,11 +714,11 @@
 
     function setDataLine(line) {
         if(line === 'primary' && !state.primaryOn) {
-            alert('提示：主要 SIM 卡目前已關閉，無法使用。');
+            alert('提示：個人 SIM 卡目前已關閉，無法使用。');
             return;
         }
         if(line === 'travel' && !state.travelOn) {
-            alert('提示：請先到「旅遊」裡面「開啟此號碼」，才能將網路切換過來喔！');
+            alert('提示：請先到「日本」裡面「開啟此號碼」，才能將網路切換過來喔！');
             return;
         }
         
@@ -480,6 +735,152 @@
         setTimeout(() => {
             checkCompletion();
         }, 500);
+    }
+
+    function submitPhoneNumber() {
+        const result = document.getElementById('phone-result');
+        if (!state.phoneNumber) {
+            state.phoneDialed = false;
+            result.innerText = '請先輸入號碼。';
+            return;
+        }
+
+        const missingSteps = getMissingSteps();
+        if (missingSteps.length > 0) {
+            state.phoneDialed = false;
+            state.pendingClearPhone = true;
+            showFailureModal(missingSteps);
+            result.innerText = '撥號失敗，請先完成前置步驟。';
+            return;
+        }
+
+        if (state.phoneNumber === '+886935120437') {
+            state.phoneDialed = true;
+            result.innerText = '已撥打，請確認前面的設定是否完成。';
+        } else {
+            state.phoneDialed = false;
+            result.innerText = '號碼不正確，請重新輸入。';
+        }
+
+        checkCompletion();
+    }
+
+    function updatePhoneDisplay() {
+        const display = document.getElementById('phone-number-display');
+        display.innerText = state.phoneNumber || ' ';
+    }
+
+    function getMissingSteps() {
+        const missing = [];
+        if (!state.travelOn) missing.push('日本 eSIM 目前是關閉的，請先打開「日本」號碼。');
+        if (!state.travelRoaming) missing.push('日本的「數據漫遊」還沒開啟。');
+        if (state.primaryOn) missing.push('「個人」號碼還沒關閉。');
+        if (state.phoneNumber !== '+886935120437') missing.push('電話號碼不是 +886935120437。');
+        return missing;
+    }
+
+    function showFailureModal(missingSteps) {
+        const modal = document.getElementById('failure-modal');
+        const body = document.getElementById('failure-modal-body');
+        body.innerText = '以下步驟尚未完成：\n\n' + missingSteps.map(step => `• ${step}`).join('\n');
+        modal.style.display = 'flex';
+    }
+
+    function confirmFailureModal() {
+        document.getElementById('failure-modal').style.display = 'none';
+        if (state.pendingClearPhone) {
+            state.phoneNumber = '';
+            state.phoneDialed = false;
+            state.pendingClearPhone = false;
+            document.getElementById('phone-result').innerText = '';
+            updatePhoneDisplay();
+        }
+    }
+
+    function appendPhoneDigit(digit) {
+        state.phoneNumber += digit;
+        state.phoneDialed = false;
+        updatePhoneDisplay();
+        document.getElementById('phone-result').innerText = '';
+    }
+
+    function backspacePhoneDigit() {
+        if (!state.phoneNumber) return;
+        state.phoneNumber = state.phoneNumber.slice(0, -1);
+        state.phoneDialed = false;
+        state.pendingClearPhone = false;
+        updatePhoneDisplay();
+    }
+
+    function bindDialerEvents() {
+        document.querySelectorAll('.dialer-key').forEach(btn => {
+            const digit = btn.getAttribute('data-digit');
+            if (!digit) return;
+
+            if (digit === '0') {
+                let longPressTimer = null;
+                let longPressTriggered = false;
+                let pressed = false;
+                let suppressNextClick = false;
+
+                const start = (event) => {
+                    event.preventDefault();
+                    if (pressed) return;
+                    pressed = true;
+                    longPressTriggered = false;
+                    longPressTimer = setTimeout(() => {
+                        longPressTriggered = true;
+                        appendPhoneDigit('+');
+                    }, 600);
+                };
+
+                const end = (event) => {
+                    event.preventDefault();
+                    if (!pressed) return;
+                    pressed = false;
+                    if (longPressTimer) {
+                        clearTimeout(longPressTimer);
+                        longPressTimer = null;
+                    }
+                    if (!longPressTriggered) {
+                        suppressNextClick = true;
+                        appendPhoneDigit('0');
+                        setTimeout(() => {
+                            suppressNextClick = false;
+                        }, 0);
+                    }
+                };
+
+                const cancel = (event) => {
+                    event.preventDefault();
+                    if (longPressTimer) {
+                        clearTimeout(longPressTimer);
+                        longPressTimer = null;
+                    }
+                    pressed = false;
+                    longPressTriggered = false;
+                };
+
+                btn.addEventListener('pointerdown', start);
+                btn.addEventListener('pointerup', end);
+                btn.addEventListener('pointerleave', cancel);
+                btn.addEventListener('pointercancel', cancel);
+                btn.addEventListener('click', (event) => {
+                    if (suppressNextClick) {
+                        event.preventDefault();
+                        return;
+                    }
+                });
+            } else {
+                btn.addEventListener('click', () => appendPhoneDigit(digit));
+            }
+        });
+
+        const deleteBtn = document.getElementById('dialer-delete-btn');
+        deleteBtn.addEventListener('click', backspacePhoneDigit);
+
+        const callBtn = document.getElementById('dialer-call-btn');
+        callBtn.addEventListener('click', submitPhoneNumber);
     }
 
     function renderUI() {
@@ -502,12 +903,14 @@
 
         let dataText = '關閉';
         if (state.dataLine === 'primary') dataText = '主要';
-        if (state.dataLine === 'travel') dataText = '旅遊';
+        if (state.dataLine === 'travel') dataText = '日本';
         document.getElementById('ui-main-data-line').innerText = dataText;
+
+        updatePhoneDisplay();
     }
 
     function checkCompletion() {
-        if(state.travelOn && state.dataLine === 'travel' && state.travelRoaming && state.manualDataSwitchToTravel && !state.primaryOn) {
+        if(state.travelOn && state.travelRoaming && state.phoneNumber === '+886935120437' && state.phoneDialed && !state.primaryOn) {
             if (state.isSuccessTriggered) return;
             state.isSuccessTriggered = true;
 
@@ -517,7 +920,7 @@
 
             setTimeout(() => {
                 statusIcons.classList.remove('searching');
-                statusIcons.innerText = "SoftBank 5G 🔋";
+                statusIcons.innerText = "JP eSIM 5G 🔋";
                 statusIcons.style.color = "#34c759"; 
 
                 setTimeout(() => {
@@ -529,11 +932,13 @@
 
     function resetSimulator() {
         state = { 
-            primaryOn: true, travelOn: false, dataLine: 'primary', 
+            primaryOn: true, travelOn: true, dataLine: 'primary', 
             allowDataSwitching: false, travelRoaming: false, manualDataSwitchToTravel: false,
-            travelDetailsUnlocked: false, isSuccessTriggered: false
+            travelDetailsUnlocked: false, phoneNumber: '', phoneDialed: false, isSuccessTriggered: false
         };
         document.getElementById('success-overlay').style.display = 'none';
+        document.getElementById('phone-result').innerText = '';
+        document.getElementById('failure-modal').style.display = 'none';
         
         const statusIcons = document.getElementById('top-status-icons');
         statusIcons.innerText = "4G 🔋";
@@ -545,6 +950,7 @@
     }
 
     window.onload = () => {
+        bindDialerEvents();
         navTo('screen-home'); // 【修正】初始化預設為主畫面
     };
 </script>
